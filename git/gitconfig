@@ -1,0 +1,24 @@
+[core]
+	excludesfile = $HOME/.gitignore
+	autocrlf = false
+        safecrlf = true
+        showUntrackedFiles = all
+        fsckobjects = true
+        pager = less -F -X
+[user]
+	name = Andreas Strikos
+	user = astrikos
+	email = astrikos@github.com
+[github]
+	user = astrikos
+[difftool "icdiff"]
+	cmd = /usr/local/bin/icdiff --line-numbers $LOCAL $REMOTE
+[push]
+	default = simple
+[pull]
+        rebase = true
+[alias]
+        pl = pull --rebase
+        dfm = diff master -- .
+[init]
+	defaultBranch = main

@@ -1,0 +1,49 @@
+export ZSH=$HOME/.oh-my-zsh
+
+ZSH_THEME="astrikos"
+
+plugins=(git history-substring-search fasd autojump)
+
+source $ZSH/oh-my-zsh.sh
+
+# autojump configuration
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+
+# Custom configuration 
+export GIT_COMMITTER_NAME="Andreas Strikos"
+export GIT_COMMITTER_EMAIL="astrikos@github.com"
+export GIT_AUTHOR_NAME="Andreas Strikos"
+export GIT_AUTHOR_EMAIL="astrikos@github.com"
+
+alias git-tree='git log --graph --full-history --all --color --pretty=format:" %x1b[31m%h%x09%x1b[32m%d%x1b[0m%x20%s "'
+alias gt="git tag --format='%(creatordate:iso8601)%09%(refname:strip=2)%09%(taggername)%09%(subject)' --sort=creatordate"
+
+function tsignal() {tmux send-keys -t right "$@" c-m}
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+function weather() {
+    curl wttr.in/$@
+}
+
+# local bin. Make sure this is the first.
+export PATH=$PATH:$HOME/.local/bin
+
+# Set VIM as editor in all places
+export VISUAL=nvim
+export GIT_EDITOR=nvim
+export EDITOR=nvim
+
+alias k="kubectl"
+alias kc="k config"
+alias kcu="kc use-context"
+alias kg="k get"
+alias khealth="kg --raw='/readyz?verbose'"
+function kns() { kc set-context $(kc current-context) --namespace=$1; }
+alias enable_kubectl_shell="rm ~/.kube_ps1.disable"
+alias disable_kubectl_shell="touch ~/.kube_ps1.disable"
+
+alias pullall='find . -type d -depth 1 -exec sh -c "echo {};git --git-dir={}/.git --work-tree=$PWD/{} pull" \;'
+
+alias rz="source ~/.zshrc"
