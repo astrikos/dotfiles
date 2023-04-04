@@ -47,3 +47,5 @@ alias disable_kubectl_shell="touch ~/.kube_ps1.disable"
 alias pullall='find . -type d -depth 1 -exec sh -c "echo {};git --git-dir={}/.git --work-tree=$PWD/{} pull" \;'
 
 alias rz="source ~/.zshrc"
+alias vim="nvim"
+alias vi="nvim"

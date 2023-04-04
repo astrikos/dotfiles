@@ -2,7 +2,7 @@
 
 PROMPT2='%{$fg[$CARETCOLOR]%}◀%{$reset_color%} '
 
-RPROMPT='🚀 '
+RPROMPT='🚀 codespaces'
 
 local _current_dir="%{$fg_bold[cyan]%}%~%{$reset_color%} "
 
