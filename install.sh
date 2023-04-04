@@ -66,6 +66,14 @@ setup-oh-my-zsh() {
     sudo chsh -s "$(which zsh)" "$(whoami)"
 }
 
+setup-gitdelta() {
+    echo "Setting up git-delta"
+    curl -LO https://github.com/dandavison/delta/releases/download/0.15.1/git-delta-musl_0.15.1_amd64.deb
+    sudo dpkg -i ./git-delta-musl_0.15.1_amd64.deb
+    rm -rf ./git-delta-musl_0.15.1_amd64.deb
+}
+
+
 apt-install() {
     # gh cli repo
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
@@ -82,6 +90,7 @@ main() {
     apt-install
     setup-tmux
     setup-nvim
+    setup-gitdelta
     setup-oh-my-zsh
     setup-git
     echo "Successfully setting up env"

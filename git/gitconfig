@@ -4,7 +4,7 @@
         safecrlf = true
         showUntrackedFiles = all
         fsckobjects = true
-        pager = less -F -X
+	pager = delta --line-numbers --dark
 [user]
 	name = Andreas Strikos
 	user = astrikos
