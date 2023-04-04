@@ -41,7 +41,7 @@ setup-tmux() {
 
 setup-nvim() {
     echo "Setting up neovim"
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.7.0/nvim-linux64.deb
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.8.2/nvim-linux64.deb
     sudo apt install ./nvim-linux64.deb
 
     rm -rf "$HOME/.config"
@@ -71,7 +71,7 @@ apt-install() {
     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
     sudo apt update
-    sudo apt install -y zsh gh exuberant-ctags tree shellcheck icdiff autojump jq ripgrep
+    sudo apt install -y zsh gh exuberant-ctags tree shellcheck icdiff autojump jq ripgrep libevent-dev ncurses-dev build-essential bison pkg-config
 }
 
 main() {
