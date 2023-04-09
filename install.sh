@@ -86,6 +86,8 @@ apt-install() {
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
     sudo apt update
     sudo apt install -y zsh gh exuberant-ctags tree shellcheck icdiff autojump jq ripgrep libevent-dev ncurses-dev build-essential bison pkg-config
+    sudo locale-gen en_US.UTF-8
+    sudo dpkg-reconfigure locales
     echo "==> Finished apt-installing packages"
 }
 
