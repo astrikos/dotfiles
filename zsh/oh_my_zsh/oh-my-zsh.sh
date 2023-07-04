@@ -108,6 +108,29 @@ if [ -z "$ZSH_COMPDUMP" ]; then
   ZSH_COMPDUMP="${ZDOTDIR:-${HOME}}/.zcompdump-${SHORT_HOST}-${ZSH_VERSION}"
 fi
 
+if [[ "$ZSH_DISABLE_COMPFIX" != true ]]; then
+  source "$ZSH/lib/compfix.zsh"
+  # Load only from secure directories
+  compinit -i -d "$ZSH_COMPDUMP"
+  # If completion insecurities exist, warn the user
+  handle_completion_insecurities &|
+else
+  # If the user wants it, load from all found directories
+  compinit -u -d "$ZSH_COMPDUMP"
+fi
+
+# Append zcompdump metadata if missing
+if (( $zcompdump_refresh )) \
+  || ! command grep -q -Fx "$zcompdump_revision" "$ZSH_COMPDUMP" 2>/dev/null; then
+  # Use `tee` in case the $ZSH_COMPDUMP filename is invalid, to silence the error
+  # See https://github.com/ohmyzsh/ohmyzsh/commit/dd1a7269#commitcomment-39003489
+  tee -a "$ZSH_COMPDUMP" &>/dev/null <<EOF
+
+$zcompdump_revision
+$zcompdump_fpath
+EOF
+fi
+unset zcompdump_revision zcompdump_fpath zcompdump_refresh
 if [[ $ZSH_DISABLE_COMPFIX != true ]]; then
   source $ZSH/lib/compfix.zsh
   # If completion insecurities exist, warn the user
@@ -118,7 +141,6 @@ else
   # If the user wants it, load from all found directories
   compinit -u -C -d "${ZSH_COMPDUMP}"
 fi
-
 
 # Load all of the config files in ~/oh-my-zsh that end in .zsh
 # TIP: Add files you don't want in git to .gitignore
