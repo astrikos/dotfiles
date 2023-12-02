@@ -8,6 +8,7 @@ endif
 call plug#begin("~/.config/nvim/plugins")
 Plug 'airblade/vim-gitgutter'
 Plug 'nvim-lualine/lualine.nvim'
+Plug 'github/copilot.vim'
 Plug 'fatih/vim-go'
 Plug 'nvim-lua/plenary.nvim' 
 Plug 'nvim-telescope/telescope.nvim'
@@ -19,15 +20,13 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'rafamadriz/friendly-snippets'
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-surround'
-Plug 'vim-syntastic/syntastic'
+Plug 'dense-analysis/ale'
 Plug 'majutsushi/tagbar'
 Plug 'ruanyl/vim-gh-line'
-Plug 'ellisonleao/glow.nvim', {'branch': 'main'}
-Plug 'carlsmedstad/vim-bicep'
 Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 Plug 'folke/trouble.nvim'
 Plug 'neovim/nvim-lspconfig'
+Plug 'lukas-reineke/indent-blankline.nvim'
 call plug#end()
 
 " run if file doesn't exist
@@ -78,17 +77,30 @@ vim.g.loaded = 1
 vim.g.loaded_netrwPlugin = 1
 
 require'lspconfig'.gopls.setup{}
+require'lspconfig'.solargraph.setup{}
 require('nvim-web-devicons').setup {default = true;}
-require("nvim-tree").setup({
-view = {
-    mappings = {
-      list = {
-        { key = "s", action = "vsplit" },
-        { key = "i", action = "split" },
-      },
-    },
-  },
-})
+
+local function my_on_attach(bufnr)
+  local api = require "nvim-tree.api"
+
+  local function opts(desc)
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+
+  -- default mappings
+  api.config.mappings.default_on_attach(bufnr)
+
+  -- custom mappings
+  vim.keymap.set('n', 's', api.node.open.vertical, opts('Open: Vertical Split'))
+  vim.keymap.set('n', 'i', api.node.open.horizontal, opts('Open: Horizontal Split'))
+end
+
+-- pass to setup along with your other options
+require("nvim-tree").setup {
+  ---
+  on_attach = my_on_attach,
+  ---
+}
 require("trouble").setup{}
 
 require'nvim-treesitter.configs'.setup {
@@ -100,41 +112,30 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+  ensure_installed = {
+    'javascript',
+    'typescript',
+    'tsx',
+    'css',
+    'json',
+    'lua',
+    'go',
+    'python',
+    'ruby',
+    'rust',
+    'c',
+  },
+}
+
+require("indent_blankline").setup {
+  show_current_context = true,
+  show_current_context_start = true,
+  show_end_of_line = true,
+  space_char_blankline = " ",
 }
 EOF
 
 colorscheme catppuccin
-
-"syntastic stuff
-set statusline+=%#warningmsg#
-set statusline+=%*
-
-" Better :sign interface symbols
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '!'
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 1
-let g:syntastic_python_checkers = ['pycodestyle']
-let g:syntastic_shell_checkers = ['shellcheck']
-let g:syntastic_yaml_checkers = ['yamllint']
-let g:syntastic_json_checkers = ['jsonlint']
-" let g:syntastic_html_checkers = ['tidy']
-" let g:syntastic_javascript_checkers=['jshint']
-"
-" use goimports for formatting
-let g:go_fmt_command = "goimports"
-
-" turn highlighting on
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-let g:go_def_mode='gopls'
-let g:go_info_mode='gopls'
-
-let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 
 "tags stuff
 nnoremap <silent> T :TagbarToggle<CR>
@@ -190,13 +191,15 @@ autocmd FileType python Spaces
 autocmd FileType javascript Spaces
 autocmd FileType go Tabs
 autocmd FileType html RTabs
-autocmd FileType ruby RTabs
 
 " folding
-" set foldmethod=manual
-" set foldmethod=expr
-" set foldexpr=nvim_treesitter#foldexpr()
-" set nofoldenable                     " Disable folding at startup.
+"set foldmethod=expr
+set foldmethod=indent
+"set foldexpr=nvim_treesitter#foldexpr()
+" Disable folding at startup.
+set nofoldenable
+"set tabstop=4
+"set shiftwidth=2
 
 " show > for tab, . for spaces and $ for eol. Enable with 'set list'
 set listchars+=tab:>-,space:.
@@ -215,8 +218,8 @@ nnoremap <leader>xw <cmd>TroubleToggle workspace_diagnostics<cr>
 nnoremap <leader>xd <cmd>TroubleToggle document_diagnostics<cr>
 nnoremap <leader>xq <cmd>TroubleToggle quickfix<cr>
 nnoremap <leader>xl <cmd>TroubleToggle loclist<cr>
-nnoremap gR <cmd>TroubleToggle lsp_references<cr>
-nnoremap gA <cmd>TroubleToggle lsp_definitions<cr>
+nnoremap <leader>trr <cmd>TroubleToggle lsp_references<cr>
+nnoremap <leader>trt <cmd>TroubleToggle lsp_definitions<cr>
 
 " Add at the end the whole path of file
 set statusline+=%F
