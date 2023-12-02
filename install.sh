@@ -43,8 +43,10 @@ setup-tmux() {
 
 setup-nvim() {
     echo "==> Setting up neovim"
-    curl -LO https://github.com/neovim/neovim/releases/download/v0.8.2/nvim-linux64.deb
-    sudo apt install ./nvim-linux64.deb
+    curl -LO https://github.com/neovim/neovim/releases/download/v0.9.4/nvim-linux64.tar.gz
+    tar xzvf nvim-linux64.tar.gz
+    cp ./nvim-linux64/bin/nvim "$HOME/.local/bin/"
+    rm -rf ./nvim-linux64.tar.gz ./nvim-linux64
 
     rm -rf "$HOME/.config"
     mkdir "$HOME/.config"
@@ -52,7 +54,6 @@ setup-nvim() {
     rm -rf "$HOME/.config/nvim"
     mkdir "$HOME/.config/nvim"
     ln -s "$cwd/init.vim" "$HOME/.config/nvim/init.vim"
-    rm -rf ./nvim-linux64.deb
     nvim --headless +PlugInstall +qa
     echo "==> Finished setting up neovim"
 }
